@@ -1,20 +1,67 @@
-// src/components/Navbar.js
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { UserButton } from '@clerk/clerk-react';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
+import ProfileManagement from './ProfileManagement'; // Import the ProfileManagement component
 
 
-function Navbar() {
+function Navbar({ user }) {
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false); // State for modal visibility
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (err) {
+            console.error('Error logging out:', err);
+        }
+    };
+
+    const handleProfileManagement = () => {
+        setShowProfileModal(true); // Show the modal
+        setShowDropdown(false); // Close the dropdown
+    };
+
     return (
         <nav style={styles.nav}>
             <h1 style={styles.title}>ConvergeHub</h1>
             <ul style={styles.menu}>
                 <li><Link to="/" style={styles.link}>Home</Link></li>
-                <li><Link to="/login" style={styles.link}>Login</Link></li>
-                <li><Link to="/signup" style={styles.link}>Signup</Link></li>
-                <li>&nbsp;&nbsp;&nbsp;</li>
-                <UserButton afterSignOutUrl="/" />
+
+                {user ? (
+                    <div style={styles.profileContainer}>
+                        <button
+                            style={styles.profileBtn}
+                            onClick={() => setShowDropdown(!showDropdown)}
+                        >
+                            <img
+                                src={user.photoURL || "https://via.placeholder.com/150"}
+                                alt="Profile"
+                                style={styles.profileIcon}
+                            />
+                        </button>
+                        {showDropdown && (
+                            <div style={styles.dropdown}>
+                                <button onClick={handleProfileManagement}>Manage Profile</button>
+                                <button onClick={handleLogout}>Logout</button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <li><Link to="/login" style={styles.link}>Login</Link></li>
+                        <li><Link to="/signup" style={styles.link}>Signup</Link></li>
+                        
+                    </>
+                )}
             </ul>
+
+            {/* Profile Management Modal */}
+            {showProfileModal && (
+                <div style={styles.modalOverlay}>
+                    <ProfileManagement user={user} onClose={() => setShowProfileModal(false)} />
+                </div>
+            )}
         </nav>
     );
 }
@@ -43,6 +90,41 @@ const styles = {
         textDecoration: 'none',
         marginLeft: '20px',
         fontSize: '18px',
+    },
+    profileContainer: {
+        position: 'relative',
+    },
+    profileBtn: {
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+    },
+    profileIcon: {
+        width: '30px',
+        height: '30px',
+        borderRadius: '50%',
+    },
+    dropdown: {
+        position: 'absolute',
+        top: '35px',
+        right: '0',
+        backgroundColor: '#fff',
+        borderRadius: '5px',
+        boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.1)',
+        padding: '10px',
+        zIndex: '10',
+    },
+    modalOverlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
     },
 };
 

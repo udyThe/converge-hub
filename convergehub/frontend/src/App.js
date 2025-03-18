@@ -1,10 +1,7 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import Navbar from "./components/Navbar";
 import ChannelList from "./components/ChannelList";
 import Chat from "./components/Chat";
@@ -14,17 +11,25 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CollaborativeEditor from "./components/CollaborativeEditor";
 import FileSharing from "./components/FileSharing";
 import TaskManagement from "./components/TaskManagement";
-import { useUser } from '@clerk/clerk-react';
-
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <Router>
       <div style={styles.app}>
-        <Navbar />
+        <Navbar user={user} />
         <div style={styles.content}>
           <ChannelList />
-          <AppRoutes />
+          <AppRoutes user={user} />
         </div>
       </div>
     </Router>
@@ -32,16 +37,14 @@ function App() {
 }
 
 // ✅ AppRoutes Component (All Routes here)
-function AppRoutes() {
-  const { user } = useUser();
-
+function AppRoutes({ user }) {
   return (
     <Routes>
       {/* ✅ Chat Page */}
       <Route
         path="/chat"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <Chat />
           </ProtectedRoute>
         }
@@ -51,7 +54,7 @@ function AppRoutes() {
       <Route
         path="/editor"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <CollaborativeEditor />
           </ProtectedRoute>
         }
@@ -61,7 +64,7 @@ function AppRoutes() {
       <Route
         path="/file-sharing"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <FileSharing />
           </ProtectedRoute>
         }
@@ -71,7 +74,7 @@ function AppRoutes() {
       <Route
         path="/tasks"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <TaskManagement />
           </ProtectedRoute>
         }
@@ -81,7 +84,7 @@ function AppRoutes() {
       <Route
         path="/support"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute user={user}>
             <h2>Support & Help Desk</h2>
           </ProtectedRoute>
         }
@@ -94,10 +97,15 @@ function AppRoutes() {
       {/* ✅ Welcome Page */}
       <Route
         path="/"
-        element={<div style={styles.welcome}>Welcome to ConvergeHub! 
-        {user && <p>Hello, {user.firstName}!</p>}
-        </div>}
+        element={
+          <div style={styles.welcome}>
+            Welcome to ConvergeHub!
+            {user && <p>Hello, {user.displayName || user.email}!</p>}
+          </div>
+        }
       />
+
+      <Route path="*" element={<h1>404 Not Found</h1>} />
     </Routes>
   );
 }

@@ -9,6 +9,7 @@
     "@emotion/styled": "^11.14.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
+    "firebase": "^11.4.0",
     "framer-motion": "^12.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

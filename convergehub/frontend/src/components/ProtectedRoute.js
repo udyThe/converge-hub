@@ -1,12 +1,9 @@
-import React from 'react';
-import { useUser } from '@clerk/clerk-react';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-function ProtectedRoute({ children }) {
-  const { isSignedIn } = useUser();
-
+function ProtectedRoute({ user, children }) {
   // If the user is not signed in, redirect to the login page
-  if (!isSignedIn) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 

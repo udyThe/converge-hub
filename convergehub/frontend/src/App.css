@@ -2,7 +2,13 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
 }
+/* src/styles/App.css */
+body.dark-mode {
+  background-color: #1a202c; /* Dark background */
+  color: #ffffff; /* Light text */
+}
 
+/* Add more dark mode styles as needed */
 #root {
   height: 100vh;
 }
