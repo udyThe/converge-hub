@@ -14,14 +14,21 @@ import TaskManagement from "./components/TaskManagement";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add a loading state
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setLoading(false); // Set loading to false once auth state is checked
     });
 
     return () => unsubscribe();
   }, []);
+
+  // Show a loading spinner while checking auth state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Router>
@@ -91,8 +98,14 @@ function AppRoutes({ user }) {
       />
 
       {/* ✅ Login/Signup */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route
+        path="/login"
+        element={user ? <Navigate to="/" /> : <Login />} // Redirect to home if logged in
+      />
+      <Route
+        path="/signup"
+        element={user ? <Navigate to="/" /> : <Signup />} // Redirect to home if logged in
+      />
 
       {/* ✅ Welcome Page */}
       <Route

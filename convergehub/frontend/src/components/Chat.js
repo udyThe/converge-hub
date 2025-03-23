@@ -1,5 +1,6 @@
 // src/components/Chat.js
 import React, { useState } from 'react';
+import FriendList from './FriendList';
 
 function Chat() {
     const [messages, setMessages] = useState([
@@ -17,6 +18,7 @@ function Chat() {
 
     return (
         <div style={styles.container}>
+            <FriendList />
             <div style={styles.messages}>
                 {messages.map((msg) => (
                     <div key={msg.id} style={styles.message}>

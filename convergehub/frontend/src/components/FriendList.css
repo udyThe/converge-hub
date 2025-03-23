@@ -1,0 +1,76 @@
+/* FriendList.css */
+.friend-list {
+    width: 250px;
+    height: 100vh;
+    background-color: #2f3136;
+    color: white;
+    padding: 10px;
+    /* position: fixed; */
+    right: 0;
+    top: 0;
+    border-left: 1px solid #202225;
+  }
+  
+  .friend-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .friend-list-header button {
+    background-color: #7289da;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .search-bar {
+    margin-bottom: 10px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .search-results {
+    background-color: #202225;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .search-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .search-result-item button {
+    background-color: #7289da;
+    color: white;
+    border: none;
+    padding: 3px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .friends {
+    margin-top: 10px;
+  }
+  
+  .friend-item {
+    padding: 5px;
+    background-color: #202225;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  
+  .friend-item:hover {
+    background-color: #7289da;
+  }

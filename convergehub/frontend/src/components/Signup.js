@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
   GoogleAuthProvider,
-  onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { doc, setDoc } from "firebase/firestore";
 import "./Auth.css"; // Add your CSS file for styling
 
 const Signup = () => {
@@ -19,24 +19,25 @@ const Signup = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Check if the user is already logged in
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is already logged in, redirect to home
-        navigate("/");
-      }
-    });
-
-    return () => unsubscribe(); // Cleanup subscription
-  }, [navigate]);
-
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
     try {
+      // Create user with email/password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Update user profile with username
       await updateProfile(userCredential.user, { displayName: username });
+
+      // Add user to Firestore
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        username: username,
+        phoneNumber: phoneNumber,
+        friends: [], // Initialize friends array
+      });
+
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -47,7 +48,19 @@ const Signup = () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
+
+      // Update user profile with display name
       await updateProfile(result.user, { displayName: result.user.displayName || "User" });
+
+      // Add user to Firestore
+      await setDoc(doc(db, "users", result.user.uid), {
+        uid: result.user.uid,
+        email: result.user.email,
+        username: result.user.displayName || "User",
+        phoneNumber: "",
+        friends: [], // Initialize friends array
+      });
+
       navigate("/");
     } catch (err) {
       setError(err.message);

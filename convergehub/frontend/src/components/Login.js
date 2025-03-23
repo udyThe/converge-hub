@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { doc, setDoc } from "firebase/firestore";
 import "./Auth.css"; // Add your CSS file for styling
 
 const Login = () => {
@@ -27,7 +33,22 @@ const Login = () => {
     e.preventDefault();
     setError("");
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      // Add user to Firestore if not already present
+      const userRef = doc(db, "users", userCredential.user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userRef, {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          username: userCredential.user.displayName || "User",
+          phoneNumber: "",
+          friends: [], // Initialize friends array
+        });
+      }
+
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -37,7 +58,22 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+
+      // Add user to Firestore if not already present
+      const userRef = doc(db, "users", result.user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userRef, {
+          uid: result.user.uid,
+          email: result.user.email,
+          username: result.user.displayName || "User",
+          phoneNumber: "",
+          friends: [], // Initialize friends array
+        });
+      }
+
       navigate("/");
     } catch (err) {
       setError(err.message);
