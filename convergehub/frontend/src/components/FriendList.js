@@ -3,6 +3,7 @@ import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, updateDoc, arrayUnion, doc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "./FriendList.css"; // Add your CSS file for styling
+import ChatWindow from "./ChatWindow"; // Import the ChatWindow component
 
 const FriendList = () => {
   const [friends, setFriends] = useState([]);
@@ -12,6 +13,7 @@ const FriendList = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState(""); // Add error state
   const [friendUsernames, setFriendUsernames] = useState({}); // Object to store friendId -> username mapping
+  const [selectedFriend, setSelectedFriend] = useState(null);
 
   // Fetch the current user from Firebase Authentication
   useEffect(() => {
@@ -152,8 +154,11 @@ const FriendList = () => {
             const friendUsername = friendUsernames[friendId] || friendId;
 
             return (
-              <div key={friendId} className="friend-item" onClick={() => console.log("Open chat with", friendId)}>
-                <span>{friendUsername}</span>
+              <div
+                key={friendId} className="friend-item"
+                onClick={() => setSelectedFriend({ id: friendId, username: friendUsername })}
+              >                
+              <span>{friendUsername}</span>
               </div>
             );
           })
@@ -161,6 +166,10 @@ const FriendList = () => {
           <p>Add friends to see them here.</p>
         )}
       </div>
+      {/* Render ChatWindow if a friend is selected */}
+      {selectedFriend && (
+        <ChatWindow friendId={selectedFriend.id} friendUsername={selectedFriend.username} />
+      )}
     </div>
   );
 };

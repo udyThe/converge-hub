@@ -1,0 +1,20 @@
+# TODO List
+
+- [ ] user delete kare account ui se to user collection me se bhi delete ho
+- [ ] chats collection me id generate ho , instead username se fetching ho , easy padega samajhne me
+- [ ] username unique ho , (cross check the user collection) 
+        - iska impact baki jagah bhi pad sakta h like
+            - friendlist me pehle bhi id se fetch karta h and then uska username nikal ke lagata h , so directly username hi fetch karwana padega
+- [ ] navbar styling thik karni h -_-
+- [ ] add file sharing
+- [ ] add channels functionality
+
+
+
+
+
+
+- [ ] login using username also (less priority) 
+- [ ] show typing person 
+- [ ] add calling
+- [ ] add forget password (less priority)

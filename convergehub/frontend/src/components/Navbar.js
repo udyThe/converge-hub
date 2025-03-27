@@ -35,10 +35,10 @@ function Navbar({ user }) {
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
                             <img
-                                src={user.photoURL || "https://via.placeholder.com/150"}
-                                alt="Profile"
+                                src={user.photoURL || "https://www.citypng.com/public/uploads/preview/white-user-member-guest-icon-png-image-701751695037005zdurfaim0y.png"}
+                                alt=""
                                 style={styles.profileIcon}
-                            />
+                            /> <a>{user.displayName}</a>
                         </button>
                         {showDropdown && (
                             <div style={styles.dropdown}>
